@@ -1,0 +1,71 @@
+Un API Manager est la tour de contrôle des API. Il expose, sécurise, supervise et gère le cycle de vie des API.
+
+1. Rôle principal : , sécuriser l'accès, superviser l'usage, gérer le cycle de vie, .
+exposer des API
+Exposer des API internes vers l’extérieur (ou entre services internes)
+
+Sécuriser l’accès (authentification, autorisation, quotas)
+
+Superviser l’usage (logs, analytics, alertes)
+
+Gérer le cycle de vie (versioning, dépréciation, documentation)
+fournir un portail développeur
+Faciliter l’accès aux développeurs via un portail dédié
+
+2. Composants clés :
+- API Gateway :
+C’est un proxy intelligent placé devant les API.
+Il gère :
+    Authentification (OAuth2, JWT, clés API)
+    Rate limiting (limiter les appels)
+    Transformation de requêtes/réponses
+    Caching
+    Load balancing
+
+- Developer Portal : documentation, tests, clés API.
+Un site web où les développeurs peuvent :
+    Lire la documentation
+    Tester les API
+    Récupérer des clés d’accès
+    Voir les exemples de code
+
+C’est ce qui permet de rendre tes API “consommables”.
+
+- Analytics : métriques, logs, alertes.
+L’API Manager collecte :
+    Nombre d’appels
+    Temps de réponse
+    Erreurs
+    Consommateurs les plus actifs
+
+Cela permet d’optimiser et de détecter les problèmes rapidement.
+
+- Gestion du cycle de vie : versioning, publication, retrait.
+Un API Manager gère :
+    Versioning (v1, v2)
+    Dépréciation
+    Publication / retrait
+    Politiques de sécurité
+
+
+3. Fonctionnement :
+- Importer ou créer une API.
+	(REST, SOAP, GraphQL, peu importe)
+
+- Définir des politiques (authentification, quotas, transformations).
+Exemples :
+    “Limiter à 1000 requêtes/minute”
+    “Exiger un token OAuth2”
+    “Ajouter un header”
+    “Transformer XML → JSON”
+
+- La gateway applique les règles.
+
+- Les clients appellent la gateway.
+	→ qui redirige vers ton backend
+	→ applique les règles
+	→ renvoie la réponse
+- Supervision via dashboard.
+
+
+Exemples : Azure API Management, AWS API Gateway, Apigee, Kong, Mulesoft.
