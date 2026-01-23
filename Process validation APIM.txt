@@ -23,15 +23,18 @@ partition "IaC" {
 partition "APIM" {
   :Appliquer policies (auth, quotas, logs);
   :Publier dans portail développeur;
-}
 
-:Dev teste l'API via APIM;
+:Validation l'API via APIM;
 
-if (Tests OK ?) then (Oui)
+if (Tests Dev/PO OK ?) then (Oui)
   :Marquer release comme validée;
 else (Non)
   :Rollback / correction;
 endif
 
+:Usage de l'API autorisée;
+}
+
 stop
 @enduml
+
