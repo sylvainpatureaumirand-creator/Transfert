@@ -2,7 +2,7 @@
 title Workflow de publication d'une API (APIM + CI/CD + IaC + DNS + FW + API GW)
 
 actor Dev as Developer
-actor "Admin Infra" as AdminInfra
+actor "Admin \nInfra as Code" as AdminInfra
 participant "Repo Git\n(Code API + IaC)" as Git
 participant "CI/CD\n(Pipeline)" as CICD
 participant "IaC Engine\n(Terraform/Bicep/...)" as IaC
@@ -32,7 +32,7 @@ IaC -> APIM : Créer/mettre à jour API\nNom, version, backend = API GW\nPolicie
 
 == Configuration APIM ==
 APIM -> PortailDev : Publier API\nDoc, opérations, exemples, produits
-DataOwner -> PortailDev : Valide API\nExposition des données
+
 APIM -> APIM : Appliquer policies\n(Auth, rate limiting, logging, CORS...)
 
 == Test fonctionnel  ==
@@ -42,5 +42,7 @@ APIGW -> Backend : Requête vers backend
 Backend --> APIGW : Réponse
 APIGW --> APIM : Réponse
 APIM --> Developer : Résultat de l'appel
-
+== Publication / Mise en production ==
+DataOwner -> PortailDev : Valide API\nExposition des données
+PortailDev -> APIM : Autorise l'usage de l'API aux utilisateurs 
 @enduml
