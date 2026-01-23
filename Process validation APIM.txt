@@ -16,25 +16,31 @@ partition "IaC" {
   :Appliquer template IaC;
   :Créer/MAJ DNS;
   :Configurer Firewall;
-  :Configurer API Gateway;
+
+  if (Configuration OK ?) then (Oui)
+    :Configurer API Gateway;
+  else (Non)
+    :Refus de publication;
+  endif
+
   :Créer/MAJ API dans APIM;
 }
 
 partition "APIM" {
   :Appliquer policies (auth, quotas, logs);
   :Publier dans portail développeur;
+  :Validation l'API via APIM;
 
-:Validation l'API via APIM;
+  if (Tests Dev/PO OK ?) then (Oui)
+    :Marquer release comme validée;
+  else (Non)
+    :Rollback / correction;
+  endif
 
-if (Tests Dev/PO OK ?) then (Oui)
-  :Marquer release comme validée;
-else (Non)
-  :Rollback / correction;
-endif
-
-:Usage de l'API autorisée;
+  :Usage de l'API autorisée en prod;
 }
 
 stop
 @enduml
+
 
