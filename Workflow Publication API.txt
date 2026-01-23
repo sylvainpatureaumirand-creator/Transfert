@@ -1,0 +1,41 @@
+@startuml
+title Workflow de publication d'une API (APIM + CI/CD + IaC + DNS + FW + API GW)
+
+actor Dev as Developer
+participant "Repo Git\n(Code API + IaC)" as Git
+participant "CI/CD\n(Pipeline)" as CICD
+participant "IaC Engine\n(Terraform/Bicep/...)" as IaC
+participant "DNS" as DNS
+participant "Firewall\n(NGW / WAF / SG)" as FW
+participant "API Gateway" as APIGW
+participant "APIM\n(API Management" as APIM
+participant "Backend API\n(Microservice)" as Backend
+
+Developer -> Git : Push code API + fichiers IaC\n(api, gateway, dns, firewall, apim)
+Git -> CICD : Webhook / Trigger pipeline
+
+== Build & Test ==
+CICD -> CICD : Build API\nTests unitaires / intégration
+CICD -> Backend : Déploiement de l'API\n(Container / App Service / K8s)
+Backend --> CICD : URL interne / endpoint exposé
+
+== Provisioning Infra via IaC ==
+CICD -> IaC : Lancer plan/apply IaC\n(variables: env, version, DNS, routes)
+IaC -> DNS : Créer/mettre à jour enregistrement\n(api.mondomaine.tld -> API Gateway)
+IaC -> FW : Ouvrir flux nécessaires\n(Client -> API GW, API GW -> Backend)
+IaC -> APIGW : Créer/mettre à jour route\n/path -> Backend endpoint
+IaC -> APIM : Créer/mettre à jour API\nNom, version, backend = API GW\nPolicies de base (auth, quotas, logs)
+
+== Configuration APIM ==
+APIM -> APIM : Appliquer policies\n(Auth, rate limiting, logging, CORS...)
+APIM -> "Portail Dev" : Publier API\nDoc, opérations, exemples, produits
+
+== Validation ==
+Developer -> APIM : Appel de test via portail dev\n(Try it)
+APIM -> APIGW : Appel routé vers API Gateway
+APIGW -> Backend : Requête vers backend
+Backend --> APIGW : Réponse
+APIGW --> APIM : Réponse
+APIM --> Developer : Résultat de l'appel
+
+@enduml
