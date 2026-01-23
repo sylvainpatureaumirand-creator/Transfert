@@ -1,0 +1,53 @@
+@startuml
+title Publication et appel d'une API avec CI/CD + IaC + APIM + Gateway + DNS + Firewall + OAuth2 complet
+
+participant "API Gateway" as APIGW
+participant "APIM\n(API Management)" as APIM
+participant "Authorization Server\n(OAuth2 / OIDC)" as AS
+participant "JWKS Endpoint" as JWKS
+participant "Introspection Endpoint" as INTROSPECT
+participant "Backend API\n(Resource Server)" as Backend
+participant "User Right" as RBAC
+participant "Client" as Client
+actor User as User
+
+== Phase 1 : Obtention du token OAuth2 ==
+User -> Client : Saisi des moyens d'authentification
+Client -> AS : POST /token (client_credentials / auth_code)
+AS -> JWKS : Récupération clé publique pour signer token
+JWKS --> AS : JWKS (clé publique)
+AS --> Client : Access Token (JWT)
+
+== Phase 2 : Appel API ==
+Client -> APIGW : GET /api/v1/resource\nAuthorization: Bearer <JWT>
+
+== Authentification API Gateway ==
+APIGW -> JWKS : Récupérer clé publique (cacheable)
+JWKS --> APIGW : JWKS
+APIGW -> APIGW : Vérification signature JWT
+APIGW -> APIGW : Vérification scopes techniques
+
+
+== Passage vers APIM ==
+APIGW -> APIM : Appel routé + JWT
+
+== Vérification APIM ==
+APIM -> INTROSPECT : POST /introspect <JWT>
+INTROSPECT --> APIM : statut + claims
+
+APIM -> RBAC : Vérification rôles utilisateur\n(role=data-reader)
+RBAC --> APIM : Permissions
+
+APIM -> APIM : Policies (RBAC, quotas, IP filtering, CORS)
+
+
+== Appel Backend ==
+APIM -> Backend : Appel API backend\n(token propagé ou token interne)
+Backend --> APIM : Réponse
+
+== Retour au client ==
+APIM --> APIGW : Réponse filtrée / transformée
+APIGW --> Client : Réponse finale
+
+@enduml
+
