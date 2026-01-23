@@ -1,0 +1,37 @@
+@startuml
+title Processus de publication d'une API
+
+start
+
+:Dev push code API + IaC;
+:Repo Git déclenche pipeline CI/CD;
+
+partition "CI/CD" {
+  :Build API;
+  :Tests unitaires / intégration;
+  :Déploiement backend (K8s/App Service/Container);
+}
+
+partition "IaC" {
+  :Appliquer template IaC;
+  :Créer/MAJ DNS;
+  :Configurer Firewall;
+  :Configurer API Gateway;
+  :Créer/MAJ API dans APIM;
+}
+
+partition "APIM" {
+  :Appliquer policies (auth, quotas, logs);
+  :Publier dans portail développeur;
+}
+
+:Dev teste l'API via APIM;
+
+if (Tests OK ?) then (Oui)
+  :Marquer release comme validée;
+else (Non)
+  :Rollback / correction;
+endif
+
+stop
+@enduml
