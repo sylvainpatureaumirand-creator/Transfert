@@ -2,7 +2,7 @@
 title Workflow de publication d'une API (APIM + CI/CD + IaC + DNS + FW + API GW)
 
 actor Dev as Developer
-actor "Admin \nInfra as Code" as AdminInfra
+actor "Admin IaC" as AdminInfra
 participant "Repo Git\n(Code API + IaC)" as Git
 participant "CI/CD\n(Pipeline)" as CICD
 participant "IaC Engine\n(Terraform/Bicep/...)" as IaC
