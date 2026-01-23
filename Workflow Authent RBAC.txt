@@ -1,15 +1,16 @@
 @startuml
 title Publication et appel d'une API avec CI/CD + IaC + APIM + Gateway + DNS + Firewall + OAuth2 complet
 
+actor User as User
+participant "Client" as Client
 participant "API Gateway" as APIGW
 participant "APIM\n(API Management)" as APIM
 participant "Authorization Server\n(OAuth2 / OIDC)" as AS
 participant "JWKS Endpoint" as JWKS
 participant "Introspection Endpoint" as INTROSPECT
-participant "Backend API\n(Resource Server)" as Backend
 participant "User Right" as RBAC
-participant "Client" as Client
-actor User as User
+participant "Backend API\n(Resource Server)" as Backend
+
 
 == Phase 1 : Obtention du token OAuth2 ==
 User -> Client : Saisi des moyens d'authentification
