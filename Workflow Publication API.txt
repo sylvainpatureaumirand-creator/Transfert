@@ -2,6 +2,7 @@
 title Workflow de publication d'une API (APIM + CI/CD + IaC + DNS + FW + API GW)
 
 actor Dev as Developer
+actor "Admin Infra" as AdminInfra
 participant "Repo Git\n(Code API + IaC)" as Git
 participant "CI/CD\n(Pipeline)" as CICD
 participant "IaC Engine\n(Terraform/Bicep/...)" as IaC
@@ -10,8 +11,11 @@ participant "Firewall\n(NGW / WAF / SG)" as FW
 participant "API Gateway" as APIGW
 participant "APIM\n(API Management" as APIM
 participant "Backend API\n(Microservice)" as Backend
+participant "Portail Dev" as PortailDev
+actor "Data Owner" as DataOwner
 
-Developer -> Git : Push code API + fichiers IaC\n(api, gateway, dns, firewall, apim)
+Developer -> Git : Push code API 
+AdminInfra -> Git :  Push code IaC\n(api, gateway, dns, firewall, apim)
 Git -> CICD : Webhook / Trigger pipeline
 
 == Build & Test ==
@@ -27,10 +31,11 @@ IaC -> APIGW : Créer/mettre à jour route\n/path -> Backend endpoint
 IaC -> APIM : Créer/mettre à jour API\nNom, version, backend = API GW\nPolicies de base (auth, quotas, logs)
 
 == Configuration APIM ==
+APIM -> PortailDev : Publier API\nDoc, opérations, exemples, produits
+DataOwner -> PortailDev : Valide API\nExposition des données
 APIM -> APIM : Appliquer policies\n(Auth, rate limiting, logging, CORS...)
-APIM -> "Portail Dev" : Publier API\nDoc, opérations, exemples, produits
 
-== Validation ==
+== Test fonctionnel  ==
 Developer -> APIM : Appel de test via portail dev\n(Try it)
 APIM -> APIGW : Appel routé vers API Gateway
 APIGW -> Backend : Requête vers backend
