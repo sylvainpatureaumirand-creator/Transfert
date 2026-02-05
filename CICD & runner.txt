@@ -1,0 +1,114 @@
+CICD
+
+                          ┌──────────────────────────┐
+                          │      Poste Dev           │
+                          │  (IDE, Git, Docker)      │
+                          └───────────┬──────────────┘
+                                      │  push / MR
+                                      ▼
+                        ┌───────────────────────────────┐
+                        │          GitLab               │
+                        │  - GitLab Server              │
+                        │  - GitLab CI/CD Pipelines     │
+                        │  - GitLab Container Registry  │
+                        └───────────┬───────────────────┘
+                                    │ déclenche pipeline
+                                    ▼
+                     ┌──────────────────────────────────────┐
+                     │           GitLab Runner              │
+                     │ (Docker executor / VM / Kubernetes)  │
+                     └───────────┬──────────────────────────┘
+                                 │ exécute les jobs CI/CD
+                                 ▼
+        ┌────────────────────────────────────────────────────────────────┐
+        │                        Pipeline CI/CD                          │
+        │                                                                │
+        │   1. Analyse statique (SAST, lint, SonarQube)                  │
+        │   2. Build (compilation, packaging)                            │
+        │   3. Tests unitaires / intégration                             │
+        │   4. Build image Docker → Registry GitLab                      │
+        │   5. Déploiement automatique (CD)                              │
+        └────────────────────────────────────────────────────────────────┘
+                                 │ push image / artefacts
+                                 ▼
+                     ┌──────────────────────────────────────┐
+                     │     GitLab Container Registry        │
+                     └───────────┬──────────────────────────┘
+                                 │ pull image
+                                 ▼
+        ┌────────────────────────────────────────────────────────────────┐
+        │                   Environnements d’exécution                   │
+        │                                                                │
+        │   ┌────────────────────┐   ┌────────────────────┐              │
+        │   │ Serveur DEV        │   │ Serveur TEST       │              │
+        │   │ (Docker/K8s/VM)    │   │ (Docker/K8s/VM)    │              │
+        │   └────────────────────┘   └────────────────────┘              │
+        │                                                                │
+        │   ┌────────────────────────────────────────────────────────┐   │
+        │   │ Serveur PROD (cluster K8s, VM, cloud, load balancer)   │   │
+        │   └────────────────────────────────────────────────────────┘   │
+        └────────────────────────────────────────────────────────────────┘
+
+
+1. Les runners sont conçus pour le build, pas pour l’exécution
+Les bonnes pratiques CI/CD indiquent que les runners doivent :
+    automatiser les builds,
+    exécuter les tests,
+    produire des artefacts reproductibles.
+
+Par exemple, les best practices de CI recommandent explicitement de tester et valider dans un environnement similaire à la production, ce qui implique que le runner n’est pas cet environnement. 
+Les guides CI/CD modernes (GitLab, Yield Studio, Baeldung) décrivent les runners comme des agents d’exécution de pipeline, jamais comme des serveurs applicatifs. 
+
+2. Sécurité : un runner n’est pas un environnement d’exploitation
+Les pipelines CI/CD manipulent :
+    des secrets (tokens, clés SSH, credentials),
+    du code non encore validé,
+    des branches de feature potentiellement instables.
+
+Les guides CI/CD insistent sur la nécessité d’éviter les effets de bord, les fuites de secrets, et les environnements non maîtrisés.
+Exécuter une application sur un runner reviendrait à mélanger :
+    un environnement de build/test,
+    un environnement de production.
+
+Ce mélange est explicitement identifié comme un anti‑pattern dans les bonnes pratiques CI/CD. 
+
+3. Les runners sont éphémères et non persistants
+
+Les bonnes pratiques CI recommandent :
+    des builds reproductibles,
+    des environnements jetables,
+    des exécutions isolées.
+
+Les runners sont donc réinitialisés à chaque job, ce qui rend impossible :
+    la persistance des données,
+    la disponibilité continue,
+    la supervision,
+    la scalabilité.
+
+Les guides CI/CD modernes rappellent que les pipelines doivent être stateless et reproductibles, ce qui exclut totalement l’idée d’héberger une application sur le runner. 
+
+4. Séparation des responsabilités : un principe fondamental
+
+Les guides d'implementation des CI/CD (GitLab, Yield Studio, Baeldung...) utilisent tous la même architecture :
+ Étape        |  Environnement
+___________________________________________
+ Build        |  Runner
+ Test         |  Runner
+ Packaging	  |  Runner
+ Déploiement  |  Runner
+ Exécution    |  Serveur, VM, Container...
+
+Cette séparation est explicitement recommandée pour éviter :
+    les déploiements manuels,
+    les environnements instables,
+    les pipelines fragiles. 
+
+Conclusion
+
+Les runners CI/CD ne doivent jamais exécuter une application, car :
+    ils sont éphémères,
+    ils ne sont pas sécurisés,
+    ils ne sont pas supervisés,
+    ils ne sont pas faits pour la production.
+
+Les bonnes pratiques CI/CD recommandent une séparation stricte entre build/test et exécution.
