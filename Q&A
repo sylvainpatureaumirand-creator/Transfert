@@ -1,0 +1,94 @@
+Q1. Que fait un bit LSB quand il veut se faire remarquer dans une soirée binaire ?
+
+A : Il se déplace au début du byte
+B : Il crie qu'il a un MSB en plein milieu de la soirée
+C : Il change de valeur en douce
+D : Il se transforme en octet quand il a trop bu
+
+Réponse C : quand le LSB (Least Significant Bit) change de valeur cela a pour conséquence de changer la parité d'un nombre
+
+Q2. À quoi sert vraiment un bogomips selon un pingouin philosophe ?
+
+A : A impressionner les autres pingouins
+B : A mesurer la vitesse du processeur 
+C : A savoir combien de MIPS on a raté
+D : A calibrer une boucle d'attente 
+
+Réponse D : pour pouvoir synchroniser les taches en se basant sur la puissance processeur restante.
+
+Q3. Si tu chiffres un message avec un code César décalé de 26, que se passe-t-il ?
+
+A : Tu inventes un nouveau dialecte romain
+B : Tu obtiens un message totalement illisible
+C : Tu fais planter ton alphabet latin
+D : Ton message est aussi clair que l'eau de la fontaine de Trevi
+
+Réponse D : Tu as fais une rotation sur tout l'alphabet un "a" redevient un "a" Le code de caesar est un des premiers moyens cryptographiques connus
+
+Q4. Quelle est la meilleure cachette pour un message en stéganographie ?
+
+A : Dans un bogomips compressé
+B : Dans un commentaire HTML en Comics Sans MSB
+C : Sous le tapis de souris
+D : Dans un Pixel LSB
+
+Q5. Sur le z80 de ma machine a laver, que fait l’instruction NOP ?
+
+A. Elle lance le cycle d'essorage
+B. Elle met le CPU en mode économie d’énergie
+C. Elle supprime les plaques de calcaire en lancant une pyrolyse
+D. Elle ne fait rien
+
+Réponse : D  
+Explication : NOP = No Operation. Elle occupe un cycle du processeur et c’est tout.
+Un z80 c'est un processeur très utilisé, c'etait un dérivé de celui ci qui etait dans la GameBoy Nintendo
+
+Q6 — Un “nonce” est principalement connu pour être :
+
+A. Le sel que j'ajoute dans ma salade de Hash
+B. La garantie de l’unicité d'opérations pas claires
+C. La capuche en toile de la robe de bure d'une nonne
+D. Une blague de cryptographe barbu
+
+Réponse : B  
+Explication : Un nonce est une valeur unique utilisée une seule fois, souvent pour éviter les attaques par rejeu. C'est le cousin du "Salt" utilisé dans les hashs
+
+Q7. Quand je fais un run avec mon x86, qu'est ce que j'utilise en pointeur de pile quand j'arrive en bout de piste ?
+
+A. L'ESP
+B. La climatisation
+C. L'ABS
+D. Mes warnings parce que je suis PLS
+
+Réponse : A  
+Explication : l'ESP = Stack Pointer (32 bits) c'est ce qui permet d'appeler les fonctions ou pointer sur la pile
+
+Q8. À quoi sert réellement un test de Turing ?
+
+A. À vérifier que Claude est plus hummain que moi 
+B. À mesurer la vitesse à laquelle un ordinateur peut résoudre un sudoku
+C. À déterminer si ChatGPT fait semblant d’avoir des émotions crédibles
+D. À s’assurer qu’un ordinateur ne répondra pas “42” à toutes les questions
+
+Réponse : A
+Explication : Le test de Turing évalue la capacité d’une machine à se faire passer pour un humain dans une conversation naturelle.
+Si un évaluateur ne peut pas distinguer la machine de l’humain, la machine “réussit” le test.
+
+
+Q9. Que fait Mallory pendant qu’Alice et Bob se lance dans un Diffie‑Hellman endiablé ?
+
+A. Elle fait tapisserie et se lache sur Insta en clashant Alice
+B. Elle regarde analyse les pas pour pouvoir faire pareil dans DALS 
+C. Elle se glisse entre Alice et Bob pour piquer la place d'Alice dans la danse
+D. Elle tente de négocier un “Diffie‑Hellman Premium” avec options illimitées
+
+Q10. Que se passe‑t‑il quand un QBit passe dans une porte Hadamard ?
+
+A. Il devient philosophe et remet en question sa propre existence
+B. Il entre en superposition en chantant du “Yodel quantique”
+C. Il se transforme en onde, puis en lasagne quantique pour resortir de l'autre coté de la porte
+D. Il se met à vibrer à 42 hertz, la fréquence sacrée des QBits
+
+Réponse : B
+La porte Hadamard crée une superposition équilibrée. C’est un peu comme si ton QBit disait :
+    “Je suis autant 0 que 1, débrouille‑toi avec ça.”
