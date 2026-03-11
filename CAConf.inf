@@ -1,0 +1,8 @@
+[Version]
+Signature="$Windows NT$"
+
+[Extensions]
+2.5.29.30 = "{text}"
+_continue_ = "permitted;DNS=sub.domaine.ca&"
+_continue_ = "excluded;DNS=domaine.ca&"
+_continue_ = "excluded;DNS=*.domaine.ca"
