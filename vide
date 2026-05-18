@@ -1,82 +1,69 @@
-numéro de vlan;Nom;adresse IP;masque;Commentaire
-2;ADM-RZO;192.168.5.0;255.255.255.0;Vlan d'administratE002-IOn des commutateurs et firewalls
-;FWL-DC01-01;192.168.5.254;;Passerelle par défaut du Vlan 
-;SWI-DC01-01;192.168.5.1;;Switch Point de connexion Data Center 01
-;SWI-PC01-01;192.168.5.11;;Switch Point Connexion 01
-;SWI-PC02-01;192.168.5.13;;Switch Point Connexion 02
-;SWI-PC03-01;192.168.5.15;;Switch Point Connexion 03
-;SWI-PC04-01;192.168.5.17;;Switch Point Connexion 04
-;SWI-PC05-01;192.168.5.19;;Switch Point Connexion 05
-;SWI-PC06-01;192.168.5.21;;Switch Point Connexion 06
-;SWI-PC07-01;192.168.5.23;;Switch Point Connexion 07
-;;;;
-3;ADM-SRV;192.168.9.0;255.255.255.0;Vlan pour les interfaces Idrac et admin vmware
-;FWL-DC01-01;192.168.9.254;;Passerelle par défaut du Vlan
-;SRV-DC01-01-ADM;192.168.9.12;;Interface d'admin vmware du serveur
-;SRV-DC01-01-IDRAC;192.168.9.11;;Interface Idrac du serveur
-;;;;
-10;SRV-COM;192.168.10.0;255.255.255.0;Services communs - Annuaire / radius…
-;FWL-DC01-01;192.168.10.254;;Passerelle par défaut du Vlan
-;VM-SC-01;192.168.10.11;;Serveur annuaire, authentification et PKI
-;;;;
-11;SRV-DI;192.168.11.0;255.255.255.0;Serveurs DI
-;FWL-DC01-01;192.168.11.254;;Passerelle par défaut du Vlan
-;VM-DI-01;192.168.11.11;;Serveur DI
-;;;;
-12;SRV-VIDEO;192.168.12.0;255.255.255.0;Serveurs Vidéo (Enregistreur, Gestion)
-;FWL-DC01-01;192.168.12.254;;Passerelle par défaut du Vlan
-;VM-VIDEO-01;192.168.12.11;;Serveur Vidéo
-;;;;
-13;SRV-HYP;192.168.13.0;255.255.255.0;Serveurs Hyperviseur
-;FWL-DC01-01;192.168.13.254;;Passerelle par défaut du Vlan
-;VM-HYP-01;192.168.13.11;;Serveur Hyperviseur metier (Panorama)
-;;;;
-20;CLT-PC;192.168.20.0;255.255.255.0;Postes de travail
-;FWL-DC01-01;192.168.20.254;;Passerelle par défaut du Vlan
-;PC-PCS-01;192.168.20.11;;Poste client installé au PC Secu
-;;;;
-21;CLT-DI;192.168.21.0;255.255.255.0;Detecteur d'intrustion
-;FWL-DC01-01;192.168.21.254;;Passerelle par défaut du Vlan
-;SR-PC01-01;192.168.21.10;;
-;SR-PC02-01;192.168.21.21;;
-;SR-PC02-02;192.168.21.22;;
-;SR-PC02-03;192.168.21.23;;
-;SR-PC03-01;192.168.21.31;;
-;SR-PC03-02;192.168.21.32;;
-;SR-PC04-01;192.168.21.41;;
-;SR-PC04-02;192.168.21.42;;
-;SR-PC05-01;192.168.21.51;;
-;SR-PC06-01;192.168.21.61;;
-;SR-PC06-02;192.168.21.62;;
-;SR-PC06-03;192.168.21.63;;
-;SR-PC07-01;192.168.21.71;;
-;;;;
-22;CLT-VIDEO;192.168.22.0;255.255.255.0;Caméras
-;FWL-DC01-01;192.168.22.254;;Passerelle par défaut du Vlan
-;CAM-PC01-01;192.168.22.11;;
-;CAM-PC01-02;192.168.22.12;;
-;CAM-PC01-03;192.168.22.13;;
-;CAM-PC02-01;192.168.22.21;;
-;CAM-PC02-02;192.168.22.22;;
-;CAM-PC03-01;192.168.22.31;;
-;CAM-PC03-02;192.168.22.32;;
-;CAM-PC04-01;192.168.22.41;;
-;;;;
-23;CLT-GTC;192.168.23.0;255.255.255.0;Vlan des boitiers IO
-;FWL-DC01-01;192.168.23.254;;Passerelle par défaut du Vlan
-;IO-PC01-01;192.168.23.11;;
-;IO-PC02-01;192.168.23.21;;
-;IO-PC03-01;192.168.23.31;;
-;IO-PC04-01;192.168.23.41;;
-;IO-PC05-01;192.168.23.51;;
-;IO-PC06-01;192.168.23.61;;
-;IO-PC07-01;192.168.23.71;;
-;;;;
-24;CLT-DI;192.168.24.0;255.255.255.0;Vlan d'administration des commutateurs et firewalls
-;FWL-DC01-01;192.168.24.254;;Passerelle par défaut du Vlan
-;;;;
-25;CLT-ADMIN;192.168.25.0;255.255.255.0;Postes d'administration
-;FWL-DC01-01;192.168.25.254;;Passerelle par défaut du Vlan
-;VM-ADM-01;192.168.25.11;;Poste client 01 installé au PCC
-;PC-DC01-01;192.168.25.101;;Ordinateur de maintenance
+Les étapes essentielles sont :
+    Validation de la chaîne
+    Vérification de la révocation
+    Vérification de la validité temporelle
+    Contrôle du DN / SAN
+    Vérification des usages autorisés (KeyUsage / EKU)
+    Vérification de la clé publique et de la signature
+    Contrôle des extensions critiques
+    Vérification de la correspondance avec la session (preuve de possession)
+    Vérification des politiques de certification (OID)
+    Vérification des contraintes de nommage et de chemin (Name Constraints / Path Constraints)
+
+Détail complet des étapes fondamentales
+1. Validation de la chaîne de certification
+    Reconstruction de la chaîne : certificat → intermédiaire(s) → racine.
+    Vérification que chaque certificat est signé par le suivant.
+    Vérification que la racine est de confiance (truststore).
+
+2. Vérification de la non‑révocation
+    Vérification CRL (Certificate Revocation List).
+    Vérification OCSP (Online Certificate Status Protocol).
+    Vérification OCSP stapling si disponible.
+    Gestion des politiques de soft‑fail / hard‑fail.
+
+3. Vérification de la validité temporelle
+    notBefore ≤ maintenant ≤ notAfter.
+    Vérification de la dérive temporelle (NTP).
+
+4. Contrôle du DN et du SAN
+    Vérification du Subject DN (CN, OU, O, C…).
+    Vérification du Subject Alternative Name (SAN) — obligatoire pour TLS moderne.
+    Vérification du format (RFC 5280).
+
+5. Vérification des usages autorisés : KeyUsage & ExtendedKeyUsage
+    KeyUsage : digitalSignature, keyEncipherment, keyAgreement, etc.
+    EKU : ClientAuth, ServerAuth, CodeSigning, EmailProtection, etc.
+    Rejet si l’usage ne correspond pas au contexte (ex : certificat serveur utilisé comme certificat client).
+
+6. Vérification de la signature et de la clé publique
+    Vérification cryptographique de la signature du certificat.
+    Vérification de la taille de clé (RSA 2048+, ECC P‑256…).
+    Vérification de l’algorithme (SHA‑256 minimum).
+
+7. Contrôle des extensions critiques
+    Toute extension marquée critical doit être comprise et respectée.
+    Exemples : NameConstraints, PolicyConstraints, BasicConstraints.
+
+8. Preuve de possession de la clé privée
+    Le client doit prouver qu’il possède la clé privée correspondant au certificat.
+    Dans TLS : challenge → signature → vérification.
+    Sans cette étape, un certificat volé mais sans clé privée ne fonctionnerait pas.
+
+9. Vérification des politiques de certification (Certificate Policies / OID)
+    Vérification des OID de politique (ex : eIDAS, entreprise interne).
+    Vérification de la compatibilité avec la politique locale (CP/CPS).
+
+10. Vérification des contraintes de chemin et de nommage
+    NameConstraints : restrictions sur les domaines, emails, IP.
+    PathLengthConstraint : profondeur maximale de la chaîne.
+    BasicConstraints : CA = true/false.
+
+11. Contrôles supplémentaires selon le contexte
+    Vérification du pinning (HPKP, TOFU, pinning applicatif).
+    Vérification du niveau d’assurance (LoA) dans les architectures IAM.
+
+    Vérification du format du certificat (X.509 v3).
+
+    Vérification des contraintes de sécurité internes (longueur de clé, algorithmes interdits, durée max).
 
