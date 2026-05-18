@@ -62,8 +62,6 @@ Détail complet des étapes fondamentales
 11. Contrôles supplémentaires selon le contexte
     Vérification du pinning (HPKP, TOFU, pinning applicatif).
     Vérification du niveau d’assurance (LoA) dans les architectures IAM.
-
     Vérification du format du certificat (X.509 v3).
-
     Vérification des contraintes de sécurité internes (longueur de clé, algorithmes interdits, durée max).
 
