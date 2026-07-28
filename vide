@@ -65,3 +65,89 @@ Détail complet des étapes fondamentales
     Vérification du format du certificat (X.509 v3).
     Vérification des contraintes de sécurité internes (longueur de clé, algorithmes interdits, durée max).
 
+
+1. Durcissement du FlashBlade
+	- Chiffrement au repos
+		FlashBlade chiffre automatiquement toutes les données via AES‑256 avec des clés gérées par le système.
+		A renforcer avec :
+			KMIP external key management (Thales, HashiCorp Vault, etc.)
+			Rotation des clés
+			Politique stricte de gestion des clés
+	- Durcissement du système
+		Désactivation des services inutiles
+		Mise à jour régulière du Purity//FB
+		Activation du mode sécurisé (Secure Mode)
+		Restriction des commandes d’administration
+ 
+2. Sécurisation des accès
+	- RBAC avancé
+	FlashBlade supporte un RBAC granulaire :
+		Administrateur
+		Storage Admin
+		Read‑only
+		Object Admin (S3)
+		File Admin (NFS/SMB)
+	- Authentification forte
+		MFA via intégration SAML/SSO
+		LDAP / Active Directory
+		Certificats pour API / S3
+	- API Token Management
+		Tokens courts
+		Rotation automatique
+		Droits minimaux
+		
+3. Sécurité réseau
+	- Segmentation réseau
+		VLAN dédiés pour NFS/SMB
+		VLAN dédiés pour S3
+		VLAN d’administration isolé
+		Aucun accès direct depuis Internet
+	- Contrôles d’accès réseau
+		ACL sur exports NFS
+		SMB share restrictions
+		S3 bucket policies
+		Limitation par IP / subnet
+	- TLS partout
+		TLS 1.2+ obligatoire
+		Certificats internes ou AC publique
+		Désactivation des suites cryptographiques faibles
+		
+4. Protection des données
+	- Snapshots immuables
+	FlashBlade permet :
+		Snapshots read‑only
+		Verrouillage temporel (SafeMode)
+		Rétention anti‑suppression
+	- SafeMode
+	Le mécanisme anti‑ransomware de Pure Storage :
+		Impossible de supprimer les snapshots
+		Impossible de réduire la rétention
+		Impossible de désactiver SafeMode sans Pure Support
+		Protection même si un admin est compromis
+	- Versioning S3
+		Versioning des objets
+		Protection contre les suppressions accidentelles
+		Rétention WORM (Write Once Read Many)
+
+5. Audit & supervision
+	- Audit complet
+		Journalisation des actions admin
+		Logs d’accès NFS/SMB
+		Logs S3 (PUT/GET/DELETE)
+		Export vers SIEM (Splunk, Sentinel, QRadar)
+	- Monitoring
+		Pure1 (cloud)
+		SNMP
+		Webhooks
+		Alertes sur comportements anormaux
+
+6. Résilience ransomware
+	- SafeMode + snapshots immuables
+		Le combo le plus efficace.
+	- Isolation des sauvegardes
+		VLAN dédié
+		Pas d’accès admin partagé
+		Pas de comptes communs avec la prod
+	- WORM / Object Lock
+		Rétention légale
+		Protection contre la suppression malveillante
