@@ -69,17 +69,32 @@ Sub CreerEtNettoyerOnglets()
 
     Dim wsModel As Worksheet
     Dim wsListe As Worksheet
+    Dim wsExclusions As Worksheet
     Dim lastRow As Long
+    Dim lastRowExcl As Long
     Dim i As Long
     Dim nomOnglet As String
     Dim nomsValides As Collection
+    Dim Exclusions As Collection
     Dim ws As Worksheet
 
     Set wsModel = ThisWorkbook.Worksheets("Template")
     Set wsListe = ThisWorkbook.Worksheets("Liste")
-    Set nomsValides = New Collection
+    Set wsExclusions = ThisWorkbook.Worksheets("ListeOnglets")
 
-    ' --- Récupération des noms valides ---
+    Set nomsValides = New Collection
+    Set Exclusions = New Collection
+
+    ' --- Charger les exclusions depuis l'onglet ListeOnglets ---
+    lastRowExcl = wsExclusions.Cells(wsExclusions.Rows.Count, "A").End(xlUp).Row
+
+    For i = 2 To lastRowExcl
+        If Trim(wsExclusions.Cells(i, "A").Value) <> "" Then
+            Exclusions.Add Trim(wsExclusions.Cells(i, "A").Value)
+        End If
+    Next i
+
+    ' --- Charger les noms valides depuis Liste ---
     lastRow = wsListe.Cells(wsListe.Rows.Count, "A").End(xlUp).Row
 
     For i = 3 To lastRow
@@ -97,29 +112,29 @@ Sub CreerEtNettoyerOnglets()
         If Not OngletExiste(nomOnglet) Then
             wsModel.Copy After:=Sheets(Sheets.Count)
             ActiveSheet.Name = nomOnglet
+
+            ' --- Coloration de l'onglet créé ---
+            ActiveSheet.Tab.Color = RGB(255, 255, 0)   ' Jaune
         End If
     Next i
 
-    ' --- Suppression des onglets qui ne sont plus dans la liste ---
+    ' --- Suppression des onglets obsolètes ---
     For Each ws In ThisWorkbook.Worksheets
-        If ws.Name <> wsModel.Name And ws.Name <> wsListe.Name Then
+
+        ' On ignore les onglets exclus
+        If Not NomDansCollection(ws.Name, Exclusions) Then
+
+            ' On supprime uniquement si l'onglet n'est pas dans la liste des noms valides
             If Not NomDansCollection(ws.Name, nomsValides) Then
                 Application.DisplayAlerts = False
                 ws.Delete
                 Application.DisplayAlerts = True
             End If
+
         End If
+
     Next ws
 
 End Sub
-Function NomDansCollection(nom As String, col As Collection) As Boolean
-    Dim i As Long
-    For i = 1 To col.Count
-        If col(i) = nom Then
-            NomDansCollection = True
-            Exit Function
-        End If
-    Next i
-    NomDansCollection = False
-End Function
+
 
