@@ -65,3 +65,54 @@ Détail complet des étapes fondamentales
     Vérification du format du certificat (X.509 v3).
     Vérification des contraintes de sécurité internes (longueur de clé, algorithmes interdits, durée max).
 
+Sub CreerOngletsDepuisModele()
+
+    Dim wsModel As Worksheet
+    Dim wsListe As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+    Dim nomOnglet As String
+
+    ' --- Définition des feuilles ---
+    Set wsModel = ThisWorkbook.Worksheets("Template")
+    Set wsListe = ThisWorkbook.Worksheets("Liste")
+
+    ' --- Dernière ligne du tableau ---
+    lastRow = wsListe.Cells(wsListe.Rows.Count, "A").End(xlUp).Row
+
+    ' --- Boucle sur les noms d'onglets ---
+    For i = 2 To lastRow
+        
+        nomOnglet = Trim(wsListe.Cells(i, "A").Value)
+        
+        If nomOnglet <> "" Then
+            
+            ' Vérifie si l'onglet existe déjà
+            If Not OngletExiste(nomOnglet) Then
+                
+                ' Copie du modèle
+                wsModel.Copy After:=Sheets(Sheets.Count)
+                
+                ' Renommage
+                ActiveSheet.Name = nomOnglet
+            
+            End If
+        
+        End If
+    
+    Next i
+
+End Sub
+
+
+' --- Fonction utilitaire : vérifier si un onglet existe ---
+Function OngletExiste(nom As String) As Boolean
+    Dim ws As Worksheet
+    For Each ws In ThisWorkbook.Worksheets
+        If ws.Name = nom Then
+            OngletExiste = True
+            Exit Function
+        End If
+    Next ws
+    OngletExiste = False
+End Function
