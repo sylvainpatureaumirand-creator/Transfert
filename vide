@@ -65,54 +65,61 @@ Détail complet des étapes fondamentales
     Vérification du format du certificat (X.509 v3).
     Vérification des contraintes de sécurité internes (longueur de clé, algorithmes interdits, durée max).
 
-Sub CreerOngletsDepuisModele()
+Sub CreerEtNettoyerOnglets()
 
     Dim wsModel As Worksheet
     Dim wsListe As Worksheet
     Dim lastRow As Long
     Dim i As Long
     Dim nomOnglet As String
+    Dim nomsValides As Collection
+    Dim ws As Worksheet
 
-    ' --- Définition des feuilles ---
     Set wsModel = ThisWorkbook.Worksheets("Template")
     Set wsListe = ThisWorkbook.Worksheets("Liste")
+    Set nomsValides = New Collection
 
-    ' --- Dernière ligne du tableau ---
+    ' --- Récupération des noms valides ---
     lastRow = wsListe.Cells(wsListe.Rows.Count, "A").End(xlUp).Row
 
-    ' --- Boucle sur les noms d'onglets ---
-    For i = 2 To lastRow
-        
+    For i = 3 To lastRow
         nomOnglet = Trim(wsListe.Cells(i, "A").Value)
-        
-        If nomOnglet <> "" Then
-            
-            ' Vérifie si l'onglet existe déjà
-            If Not OngletExiste(nomOnglet) Then
-                
-                ' Copie du modèle
-                wsModel.Copy After:=Sheets(Sheets.Count)
-                
-                ' Renommage
-                ActiveSheet.Name = nomOnglet
-            
-            End If
-        
+
+        If NomValide(nomOnglet) Then
+            nomsValides.Add nomOnglet
         End If
-    
     Next i
 
-End Sub
+    ' --- Création des onglets manquants ---
+    For i = 1 To nomsValides.Count
+        nomOnglet = nomsValides(i)
 
+        If Not OngletExiste(nomOnglet) Then
+            wsModel.Copy After:=Sheets(Sheets.Count)
+            ActiveSheet.Name = nomOnglet
+        End If
+    Next i
 
-' --- Fonction utilitaire : vérifier si un onglet existe ---
-Function OngletExiste(nom As String) As Boolean
-    Dim ws As Worksheet
+    ' --- Suppression des onglets qui ne sont plus dans la liste ---
     For Each ws In ThisWorkbook.Worksheets
-        If ws.Name = nom Then
-            OngletExiste = True
-            Exit Function
+        If ws.Name <> wsModel.Name And ws.Name <> wsListe.Name Then
+            If Not NomDansCollection(ws.Name, nomsValides) Then
+                Application.DisplayAlerts = False
+                ws.Delete
+                Application.DisplayAlerts = True
+            End If
         End If
     Next ws
-    OngletExiste = False
+
+End Sub
+Function NomDansCollection(nom As String, col As Collection) As Boolean
+    Dim i As Long
+    For i = 1 To col.Count
+        If col(i) = nom Then
+            NomDansCollection = True
+            Exit Function
+        End If
+    Next i
+    NomDansCollection = False
 End Function
+
