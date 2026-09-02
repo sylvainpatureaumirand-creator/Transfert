@@ -1,140 +1,19 @@
-Les étapes essentielles sont :
-    Validation de la chaîne
-    Vérification de la révocation
-    Vérification de la validité temporelle
-    Contrôle du DN / SAN
-    Vérification des usages autorisés (KeyUsage / EKU)
-    Vérification de la clé publique et de la signature
-    Contrôle des extensions critiques
-    Vérification de la correspondance avec la session (preuve de possession)
-    Vérification des politiques de certification (OID)
-    Vérification des contraintes de nommage et de chemin (Name Constraints / Path Constraints)
-
-Détail complet des étapes fondamentales
-1. Validation de la chaîne de certification
-    Reconstruction de la chaîne : certificat → intermédiaire(s) → racine.
-    Vérification que chaque certificat est signé par le suivant.
-    Vérification que la racine est de confiance (truststore).
-
-2. Vérification de la non‑révocation
-    Vérification CRL (Certificate Revocation List).
-    Vérification OCSP (Online Certificate Status Protocol).
-    Vérification OCSP stapling si disponible.
-    Gestion des politiques de soft‑fail / hard‑fail.
-
-3. Vérification de la validité temporelle
-    notBefore ≤ maintenant ≤ notAfter.
-    Vérification de la dérive temporelle (NTP).
-
-4. Contrôle du DN et du SAN
-    Vérification du Subject DN (CN, OU, O, C…).
-    Vérification du Subject Alternative Name (SAN) — obligatoire pour TLS moderne.
-    Vérification du format (RFC 5280).
-
-5. Vérification des usages autorisés : KeyUsage & ExtendedKeyUsage
-    KeyUsage : digitalSignature, keyEncipherment, keyAgreement, etc.
-    EKU : ClientAuth, ServerAuth, CodeSigning, EmailProtection, etc.
-    Rejet si l’usage ne correspond pas au contexte (ex : certificat serveur utilisé comme certificat client).
-
-6. Vérification de la signature et de la clé publique
-    Vérification cryptographique de la signature du certificat.
-    Vérification de la taille de clé (RSA 2048+, ECC P‑256…).
-    Vérification de l’algorithme (SHA‑256 minimum).
-
-7. Contrôle des extensions critiques
-    Toute extension marquée critical doit être comprise et respectée.
-    Exemples : NameConstraints, PolicyConstraints, BasicConstraints.
-
-8. Preuve de possession de la clé privée
-    Le client doit prouver qu’il possède la clé privée correspondant au certificat.
-    Dans TLS : challenge → signature → vérification.
-    Sans cette étape, un certificat volé mais sans clé privée ne fonctionnerait pas.
-
-9. Vérification des politiques de certification (Certificate Policies / OID)
-    Vérification des OID de politique (ex : eIDAS, entreprise interne).
-    Vérification de la compatibilité avec la politique locale (CP/CPS).
-
-10. Vérification des contraintes de chemin et de nommage
-    NameConstraints : restrictions sur les domaines, emails, IP.
-    PathLengthConstraint : profondeur maximale de la chaîne.
-    BasicConstraints : CA = true/false.
-
-11. Contrôles supplémentaires selon le contexte
-    Vérification du pinning (HPKP, TOFU, pinning applicatif).
-    Vérification du niveau d’assurance (LoA) dans les architectures IAM.
-    Vérification du format du certificat (X.509 v3).
-    Vérification des contraintes de sécurité internes (longueur de clé, algorithmes interdits, durée max).
-
-Sub CreerEtNettoyerOnglets()
-
-    Dim wsModel As Worksheet
-    Dim wsListe As Worksheet
-    Dim wsExclusions As Worksheet
-    Dim lastRow As Long
-    Dim lastRowExcl As Long
-    Dim i As Long
-    Dim nomOnglet As String
-    Dim nomsValides As Collection
-    Dim Exclusions As Collection
-    Dim ws As Worksheet
-
-    Set wsModel = ThisWorkbook.Worksheets("Template")
-    Set wsListe = ThisWorkbook.Worksheets("Liste")
-    Set wsExclusions = ThisWorkbook.Worksheets("ListeOnglets")
-
-    Set nomsValides = New Collection
-    Set Exclusions = New Collection
-
-    ' --- Charger les exclusions depuis l'onglet ListeOnglets ---
-    lastRowExcl = wsExclusions.Cells(wsExclusions.Rows.Count, "A").End(xlUp).Row
-
-    For i = 2 To lastRowExcl
-        If Trim(wsExclusions.Cells(i, "A").Value) <> "" Then
-            Exclusions.Add Trim(wsExclusions.Cells(i, "A").Value)
-        End If
-    Next i
-
-    ' --- Charger les noms valides depuis Liste ---
-    lastRow = wsListe.Cells(wsListe.Rows.Count, "A").End(xlUp).Row
-
-    For i = 3 To lastRow
-        nomOnglet = Trim(wsListe.Cells(i, "A").Value)
-
-        If NomValide(nomOnglet) Then
-            nomsValides.Add nomOnglet
-        End If
-    Next i
-
-    ' --- Création des onglets manquants ---
-    For i = 1 To nomsValides.Count
-        nomOnglet = nomsValides(i)
-
-        If Not OngletExiste(nomOnglet) Then
-            wsModel.Copy After:=Sheets(Sheets.Count)
-            ActiveSheet.Name = nomOnglet
-
-            ' --- Coloration de l'onglet créé ---
-            ActiveSheet.Tab.Color = RGB(255, 255, 0)   ' Jaune
-        End If
-    Next i
-
-    ' --- Suppression des onglets obsolètes ---
-    For Each ws In ThisWorkbook.Worksheets
-
-        ' On ignore les onglets exclus
-        If Not NomDansCollection(ws.Name, Exclusions) Then
-
-            ' On supprime uniquement si l'onglet n'est pas dans la liste des noms valides
-            If Not NomDansCollection(ws.Name, nomsValides) Then
-                Application.DisplayAlerts = False
-                ws.Delete
-                Application.DisplayAlerts = True
-            End If
-
-        End If
-
-    Next ws
-
-End Sub
-
-
+Méthode;Sécurité;Description;Usage typique
+En clair dans un fichier; Très mauvais;Le secret est écrit tel quel dans un .txt; .conf; .env.;Scripts rapides; erreurs de débutants.
+En clair dans le code source; Très mauvais;Mot de passe ou clé dans un .py; .js; .java.;Mauvaise pratique fréquente.
+En clair dans une base SQL; Très mauvais;Champ password non hashé.;Systèmes anciens.
+Encodé en Base64; Mauvais;Ce n’est pas du chiffrement; juste un encodage.;Mauvaise dissimulation.
+Chiffré avec une clé statique dans le code; Mauvais;AES mais clé codée en dur → inutile.;Applications legacy.
+Hash simple (MD5; SHA1); Mauvais;Hash rapide → cassable par brute force.;Vieilles applis.
+Hash lent (bcrypt; scrypt; Argon2); Bon;Stockage de mot de passe sécurisé.;Authentification utilisateurs.
+Chiffrement symétrique AES; Bon;Le secret est chiffré avec une clé AES.;Stockage local sécurisé.
+Chiffrement asymétrique RSA/ECC; Bon;Le secret est chiffré avec une clé publique.;Transmission sécurisée.
+Keystore OS (Windows DPAPI; macOS Keychain; GNOME Keyring);  Très bon;Le système protège la clé et le secret.;Applications desktop.
+Android Keystore;  Très bon;Clé stockée dans TEE/StrongBox.;Apps mobiles.
+iOS Secure Enclave;  Très bon;Clé protégée matériellement.;Apps iOS.
+HSM matériel;    Excellent;Secret dans un module matériel inviolable.;Banques; certificats; paiements.
+Vault (HashiCorp Vault);    Excellent;Stockage centralisé; rotation; audit.;Infra moderne.
+KMS Cloud (AWS KMS; Azure Key Vault; GCP KMS);    Excellent;Chiffrement + gestion des clés + audit.;Cloud sécurisé.
+Secret Manager Kubernetes; Bon (si chiffré);Stockage chiffré via KMS.;Microservices.
+Password Manager (Bitwarden; KeePass); Bon;Stockage chiffré avec master key.;Secrets personnels.
+TPM matériel;  Très bon;Stockage matériel sur PC/serveur.;Auth; chiffrement disque.
