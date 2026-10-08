@@ -1,1 +1,65 @@
+Sub PubliposterTableauxDansSignets()
+
+    Dim wdApp As Object
+    Dim wdDoc As Object
+    Dim tableau As Object
+    Dim lastRow As Long
+    Dim i As Long
+    
+    ' Ouvre Word ou récupère l'instance existante
+    On Error Resume Next
+    Set wdApp = GetObject(, "Word.Application")
+    If wdApp Is Nothing Then
+        Set wdApp = CreateObject("Word.Application")
+    End If
+    On Error GoTo 0
+    
+    wdApp.Visible = True
+    Set wdDoc = wdApp.ActiveDocument
+    
+    ' Dernière ligne Excel
+    lastRow = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    ' Boucle sur chaque ligne Excel
+    For i = 2 To lastRow
+        
+        Dim section As String, level As String, theme As String, valeur As String
+        Dim concatBC As String
+        Dim signetName As String
+        
+        ' Lecture des colonnes Excel
+        section = Cells(i, 1).Value   ' sert à choisir le signet
+        level = Cells(i, 2).Value
+        theme = Cells(i, 3).Value
+        valeur = Cells(i, 4).Value
+        
+        ' Concaténation Level + Theme
+        concatBC = level & " - " & theme
+        
+        ' Le signet Word est le nom contenu dans la colonne A
+        signetName = section
+        
+        ' Vérifie que le signet existe
+        If wdDoc.Bookmarks.Exists(signetName) Then
+        
+            ' Création du tableau Word dans le signet
+            Set tableau = wdDoc.Bookmarks(signetName).Range.Tables.Add( _
+                wdDoc.Bookmarks(signetName).Range, 2, 2)
+            
+            ' Remplissage du tableau
+            tableau.Cell(1, 1).Range.Text = concatBC
+            tableau.Cell(1, 2).Range.Text = ""
+            tableau.Cell(2, 1).Range.Text = valeur
+            tableau.Cell(2, 2).Range.Text = ""
+            
+            ' Recrée le signet (Word le supprime après insertion)
+            wdDoc.Bookmarks.Add signetName, tableau.Range
+        
+        Else
+            MsgBox "Le signet '" & signetName & "' n'existe pas dans Word.", vbExclamation
+        End If
+        
+    Next i
+
+End Sub
 
