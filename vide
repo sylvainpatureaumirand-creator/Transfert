@@ -5,8 +5,13 @@ Sub PubliposterTableauxDansSignets()
     Dim tableau As Object
     Dim lastRow As Long
     Dim i As Long
+    Dim cheminWord As String
     
-    ' Ouvre Word ou récupère l'instance existante
+    ' ---------------------------------------------------------
+    ' 1. Spécifier le fichier Word à ouvrir
+    ' ---------------------------------------------------------
+    cheminWord = "C:\Chemin\Vers\TonFichier.docx"   ' <<< MODIFIER ICI
+    
     On Error Resume Next
     Set wdApp = GetObject(, "Word.Application")
     If wdApp Is Nothing Then
@@ -15,12 +20,24 @@ Sub PubliposterTableauxDansSignets()
     On Error GoTo 0
     
     wdApp.Visible = True
-    Set wdDoc = wdApp.ActiveDocument
     
-    ' Dernière ligne Excel
-    lastRow = Cells(Rows.Count, "A").End(xlUp).Row
+    ' Ouvre le document Word
+    Set wdDoc = wdApp.Documents.Open(cheminWord)
     
-    ' Boucle sur chaque ligne Excel
+    
+    ' ---------------------------------------------------------
+    ' 2. Utiliser la feuille Excel nommée "publication"
+    ' ---------------------------------------------------------
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("publication")
+    
+    ' Dernière ligne de la feuille publication
+    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    
+    
+    ' ---------------------------------------------------------
+    ' 3. Boucle sur chaque ligne Excel
+    ' ---------------------------------------------------------
     For i = 2 To lastRow
         
         Dim section As String, level As String, theme As String, valeur As String
@@ -28,10 +45,10 @@ Sub PubliposterTableauxDansSignets()
         Dim signetName As String
         
         ' Lecture des colonnes Excel
-        section = Cells(i, 1).Value   ' sert à choisir le signet
-        level = Cells(i, 2).Value
-        theme = Cells(i, 3).Value
-        valeur = Cells(i, 4).Value
+        section = ws.Cells(i, 1).Value   ' sert à choisir le signet
+        level = ws.Cells(i, 2).Value
+        theme = ws.Cells(i, 3).Value
+        valeur = ws.Cells(i, 4).Value
         
         ' Concaténation Level + Theme
         concatBC = level & " - " & theme
@@ -39,7 +56,7 @@ Sub PubliposterTableauxDansSignets()
         ' Le signet Word est le nom contenu dans la colonne A
         signetName = section
         
-        ' Vérifie que le signet existe
+        ' Vérifie que le signet existe dans Word
         If wdDoc.Bookmarks.Exists(signetName) Then
         
             ' Création du tableau Word dans le signet
@@ -62,4 +79,3 @@ Sub PubliposterTableauxDansSignets()
     Next i
 
 End Sub
-
