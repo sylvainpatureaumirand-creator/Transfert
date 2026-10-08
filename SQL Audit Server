@@ -1,0 +1,58 @@
+------------------------------------------------------------
+-- 1. Création de l’audit serveur
+------------------------------------------------------------
+CREATE SERVER AUDIT Audit_Complet
+TO FILE (
+    FILEPATH = 'C:\SQLAudit\',
+    MAXSIZE = 100 MB,
+    MAX_FILES = 50,
+    RESERVE_DISK_SPACE = OFF
+)
+WITH (
+    QUEUE_DELAY = 1000,
+    ON_FAILURE = CONTINUE
+);
+GO
+
+ALTER SERVER AUDIT Audit_Complet WITH (STATE = ON);
+GO
+
+
+------------------------------------------------------------
+-- 2. Audit des actions de sécurité au niveau serveur
+------------------------------------------------------------
+CREATE SERVER AUDIT SPECIFICATION Audit_Complet_ServerSpec
+FOR SERVER AUDIT Audit_Complet
+    ADD (SERVER_ROLE_MEMBER_CHANGE_GROUP)              -- Ajout / retrait dans un rôle serveur
+    ADD (SERVER_PERMISSION_CHANGE_GROUP)               -- GRANT / REVOKE / DENY serveur
+    ADD (DATABASE_PRINCIPAL_CHANGE_GROUP)              -- CREATE USER, ALTER USER
+    ADD (DATABASE_ROLE_MEMBER_CHANGE_GROUP)            -- Ajout / retrait dans un rôle DB
+    ADD (DATABASE_OBJECT_PERMISSION_CHANGE_GROUP)      -- GRANT / REVOKE / DENY sur objets
+    ADD (LOGIN_CHANGE_PASSWORD_GROUP)                  -- Changement de mot de passe
+    ADD (SERVER_OBJECT_CHANGE_GROUP)                   -- Création / modification d’objets serveur
+    ADD (SCHEMA_OBJECT_CHANGE_GROUP)                   -- Création / modification d’objets DB
+    ADD (AUDIT_CHANGE_GROUP)                           -- Modifications des audits
+    ADD (FAILED_LOGIN_GROUP)                           -- Connexions échouées
+    ADD (SUCCESSFUL_LOGIN_GROUP);                      -- Connexions réussies
+GO
+
+ALTER SERVER AUDIT SPECIFICATION Audit_Complet_ServerSpec WITH (STATE = ON);
+GO
+
+
+------------------------------------------------------------
+-- 3. Audit des actions au niveau base de données
+------------------------------------------------------------
+USE MaBase;
+GO
+
+CREATE DATABASE AUDIT SPECIFICATION Audit_Complet_DBSpec
+FOR SERVER AUDIT Audit_Complet
+    ADD (SCHEMA_OBJECT_ACCESS_GROUP)                   -- SELECT, INSERT, UPDATE, DELETE
+    ADD (DATABASE_OBJECT_PERMISSION_CHANGE_GROUP)      -- GRANT / REVOKE / DENY DB
+    ADD (DATABASE_PRINCIPAL_CHANGE_GROUP)              -- CREATE USER, ALTER USER
+    ADD (DATABASE_ROLE_MEMBER_CHANGE_GROUP);           -- Ajout / retrait dans un rôle DB
+GO
+
+ALTER DATABASE AUDIT SPECIFICATION Audit_Complet_DBSpec WITH (STATE = ON);
+GO
